@@ -30,6 +30,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      # Hier kommt dein Deployment-Befehl, z.B.:
-      - name: Deploy to server
-        run: echo "Hier kommt dein Deployment-Skript hin"
+      - name: Build
+        run: npm run build
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
