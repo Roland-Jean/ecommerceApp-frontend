@@ -1,5 +1,5 @@
 
-export default function Cart() {
+export default function Pagnie() {
     return (
         <div>
             <h1>Your Shopping Cart</h1>
