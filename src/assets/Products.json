@@ -1,0 +1,222 @@
+[
+  {
+    "id": 1,
+    "name": "Premium Wireless Headphones",
+    "price": "$299",
+    "originalPrice": "$399",
+    "rating": 4.8,
+    "image": "🎧",
+    "badge": "Best Seller",
+    "type": "regular",
+    "category": "accessoires"
+  },
+  {
+    "id": 2,
+    "name": "Smart Phone Pro Max",
+    "price": "$899",
+    "originalPrice": "$1099",
+    "rating": 4.9,
+    "image": "📱",
+    "badge": "New",
+    "type": "new",
+    "category": "telephone"
+  },
+  {
+    "id": 3,
+    "name": "Gaming Laptop Ultra",
+    "price": "$1299",
+    "originalPrice": "$1599",
+    "rating": 4.7,
+    "image": "💻",
+    "badge": "Sale",
+    "type": "promotion",
+    "category": "ordinateur"
+  },
+  {
+    "id": 4,
+    "name": "iPhone 15 Pro Max",
+    "price": "$1199",
+    "originalPrice": "$1299",
+    "rating": 4.9,
+    "image": "📱",
+    "badge": "New",
+    "type": "new",
+    "category": "telephone"
+  },
+  {
+    "id": 5,
+    "name": "MacBook Air M3",
+    "price": "$1399",
+    "originalPrice": "$1499",
+    "rating": 4.8,
+    "image": "💻",
+    "badge": "New",
+    "type": "new",
+    "category": "ordinateur"
+  },
+  {
+    "id": 6,
+    "name": "AirPods Pro 3",
+    "price": "$249",
+    "originalPrice": "$279",
+    "rating": 4.7,
+    "image": "🎧",
+    "badge": "New",
+    "type": "new",
+    "category": "accessoires"
+  },
+  {
+    "id": 7,
+    "name": "Samsung Galaxy Watch 6",
+    "price": "$329",
+    "originalPrice": "$379",
+    "rating": 4.6,
+    "image": "⌚",
+    "badge": "New",
+    "type": "new",
+    "category": "accessoires"
+  },
+  {
+    "id": 8,
+    "name": "Samsung Galaxy S23",
+    "price": "$699",
+    "originalPrice": "$899",
+    "rating": 4.6,
+    "image": "📱",
+    "badge": "50% OFF",
+    "type": "promotion",
+    "category": "telephone"
+  },
+  {
+    "id": 9,
+    "name": "Gaming Headset RGB",
+    "price": "$89",
+    "originalPrice": "$149",
+    "rating": 4.5,
+    "image": "🎧",
+    "badge": "40% OFF",
+    "type": "promotion",
+    "category": "accessoires"
+  },
+  {
+    "id": 10,
+    "name": "Dell XPS 15",
+    "price": "$1299",
+    "originalPrice": "$1699",
+    "rating": 4.7,
+    "image": "💻",
+    "badge": "25% OFF",
+    "type": "promotion",
+    "category": "ordinateur"
+  },
+  {
+    "id": 11,
+    "name": "Wireless Mouse Pro",
+    "price": "$49",
+    "originalPrice": "$79",
+    "rating": 4.4,
+    "image": "🖱️",
+    "badge": "35% OFF",
+    "type": "promotion",
+    "category": "accessoires"
+  },
+  {
+    "id": 12,
+    "name": "OnePlus 11",
+    "price": "$549",
+    "originalPrice": "$699",
+    "rating": 4.5,
+    "image": "📱",
+    "badge": "20% OFF",
+    "type": "promotion",
+    "category": "telephone"
+  },
+  {
+    "id": 13,
+    "name": "Valentine's Phone Case Set",
+    "price": "$29",
+    "originalPrice": "$39",
+    "rating": 4.3,
+    "image": "💝",
+    "badge": "Valentine's",
+    "type": "occasion",
+    "category": "accessoires"
+  },
+  {
+    "id": 14,
+    "name": "Christmas Bluetooth Speaker",
+    "price": "$79",
+    "originalPrice": "$99",
+    "rating": 4.6,
+    "image": "🎄",
+    "badge": "Holiday",
+    "type": "occasion",
+    "category": "accessoires"
+  },
+  {
+    "id": 15,
+    "name": "Back to School Laptop Bundle",
+    "price": "$899",
+    "originalPrice": "$1099",
+    "rating": 4.8,
+    "image": "🎒",
+    "badge": "School Deal",
+    "type": "occasion",
+    "category": "ordinateur"
+  },
+  {
+    "id": 16,
+    "name": "Mother's Day Smart Watch",
+    "price": "$199",
+    "originalPrice": "$249",
+    "rating": 4.4,
+    "image": "💐",
+    "badge": "Mother's Day",
+    "type": "occasion",
+    "category": "accessoires"
+  },
+  {
+    "id": 17,
+    "name": "Father's Day Gaming Chair",
+    "price": "$299",
+    "originalPrice": "$399",
+    "rating": 4.7,
+    "image": "🪑",
+    "badge": "Father's Day",
+    "type": "occasion",
+    "category": "accessoires"
+  },
+  {
+    "id": 18,
+    "name": "4K Webcam Pro",
+    "price": "$159",
+    "originalPrice": "$199",
+    "rating": 4.5,
+    "image": "📹",
+    "badge": "4K Quality",
+    "type": "regular",
+    "category": "accessoires"
+  },
+  {
+    "id": 19,
+    "name": "Tablet Pro 12.9\"",
+    "price": "$799",
+    "originalPrice": "$899",
+    "rating": 4.6,
+    "image": "📟",
+    "badge": "Creative",
+    "type": "regular",
+    "category": "ordinateur"
+  },
+  {
+    "id": 20,
+    "name": "Mechanical Keyboard RGB",
+    "price": "$129",
+    "originalPrice": "$159",
+    "rating": 4.8,
+    "image": "⌨️",
+    "badge": "Gaming",
+    "type": "regular",
+    "category": "accessoires"
+  }
+]

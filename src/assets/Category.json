@@ -1,0 +1,32 @@
+[
+  {
+    "name": "New",
+    "icon": "✨",
+    "color": "from-green-400 to-green-600"
+  },
+  {
+    "name": "Promotion",
+    "icon": "🔥",
+    "color": "from-red-400 to-red-600"
+  },
+  {
+    "name": "Occasion",
+    "icon": "🎉",
+    "color": "from-purple-400 to-purple-600"
+  },
+  {
+    "name": "Telephone",
+    "icon": "📱",
+    "color": "from-blue-400 to-blue-600"
+  },
+  {
+    "name": "Ordinateur/laptop",
+    "icon": "💻",
+    "color": "from-indigo-400 to-indigo-600"
+  },
+  {
+    "name": "Accessoires",
+    "icon": "🎧",
+    "color": "from-pink-400 to-pink-600"
+  }
+]
