@@ -178,22 +178,14 @@ export default function Header() {
               className="relative p-2 text-gray-600 hover:text-blue-600 transition-colors duration-300 group"
             >
               <div className="w-8 h-8 flex items-center justify-center">
-                <svg
+                <img
+                  src="https://img.icons8.com/?size=100&id=9671&format=png&color=000000"
+                  alt="Shopping Cart Icon"
                   className="w-6 h-6"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M3 3h2l.4 2M7 13h10l4-8H5.4m-2.4 8v4a2 2 0 002 2h12a2 2 0 002-2v-4M7 13v4a2 2 0 002 2h6a2 2 0 002-2v-4"
-                  />
-                </svg>
+                />
               </div>
               <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold animate-pulse">
-                3
+                0
               </span>
               <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 <div className="bg-gray-800 text-white text-xs px-2 py-1 rounded whitespace-nowrap">
