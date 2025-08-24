@@ -1,8 +1,76 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import Products from "../assets/Products.json";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchSuggestions, setSearchSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const navigate = useNavigate();
+
+  // Fonction de recherche
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      // Vérifier s'il y a des résultats avant de naviguer
+      const results = Products.filter(
+        (product) =>
+          product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          product.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          product.badge.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+
+      if (results.length === 0) {
+        // Afficher message "Aucun produit trouvé" et suggérer des alternatives
+        navigate(
+          `/search?q=${encodeURIComponent(searchQuery.trim())}&noresults=true`
+        );
+      } else {
+        // Naviguer vers la page de résultats avec le terme de recherche
+        navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+      }
+
+      setSearchQuery(""); // Reset search input
+      setIsMenuOpen(false); // Fermer le menu mobile
+      setShowSuggestions(false); // Cacher les suggestions
+    }
+  };
+
+  // Gestion de l'input de recherche avec suggestions
+  const handleSearchChange = (e) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+
+    if (query.trim().length > 0) {
+      // Chercher des suggestions
+      const suggestions = Products.filter(
+        (product) =>
+          product.name.toLowerCase().includes(query.toLowerCase()) ||
+          product.category.toLowerCase().includes(query.toLowerCase())
+      ).slice(0, 5); // Limiter à 5 suggestions
+
+      setSearchSuggestions(suggestions);
+      setShowSuggestions(true);
+    } else {
+      setShowSuggestions(false);
+      setSearchSuggestions([]);
+    }
+  };
+
+  // Gestion de la touche Enter
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      handleSearch(e);
+    }
+  };
+
+  // Sélectionner une suggestion
+  const selectSuggestion = (suggestion) => {
+    setSearchQuery(suggestion.name);
+    setShowSuggestions(false);
+    navigate(`/search?q=${encodeURIComponent(suggestion.name)}`);
+  };
 
   return (
     <header className="bg-white shadow-lg sticky top-0 z-50 border-b border-gray-200">
@@ -19,10 +87,17 @@ export default function Header() {
           </div>
 
           {/* Search Bar - Hidden on mobile */}
-          <div className="hidden md:flex flex-1 max-w-lg mx-8">
-            <div className="relative w-full">
+          <div className="hidden md:flex flex-1 max-w-lg mx-8 relative">
+            <form onSubmit={handleSearch} className="relative w-full">
               <input
                 type="text"
+                value={searchQuery}
+                onChange={handleSearchChange}
+                onKeyPress={handleKeyPress}
+                onFocus={() =>
+                  searchQuery.length > 0 && setShowSuggestions(true)
+                }
+                onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
                 placeholder="Search products..."
                 className="w-full px-4 py-2 pl-10 pr-12 text-gray-700 bg-gray-100 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
               />
@@ -41,12 +116,58 @@ export default function Header() {
                   />
                 </svg>
               </div>
-              <button className="absolute inset-y-0 right-0 flex items-center pr-3">
+              <button
+                type="submit"
+                className="absolute inset-y-0 right-0 flex items-center pr-3"
+              >
                 <div className="bg-blue-600 text-white px-4 py-1 rounded-full text-sm font-medium hover:bg-blue-700 transition-colors duration-300">
                   Search
                 </div>
               </button>
-            </div>
+            </form>
+
+            {/* Search Suggestions Dropdown */}
+            {showSuggestions && searchSuggestions.length > 0 && (
+              <div className="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-lg shadow-lg mt-1 z-50">
+                {searchSuggestions.map((suggestion) => (
+                  <div
+                    key={suggestion.id}
+                    onClick={() => selectSuggestion(suggestion)}
+                    className="flex items-center px-4 py-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0"
+                  >
+                    <span className="text-2xl mr-3">{suggestion.image}</span>
+                    <div>
+                      <div className="font-medium text-gray-900">
+                        {suggestion.name}
+                      </div>
+                      <div className="text-sm text-gray-500">
+                        {suggestion.category}
+                      </div>
+                    </div>
+                    <div className="ml-auto text-blue-600 font-semibold">
+                      {suggestion.price}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* No Results Suggestion */}
+            {showSuggestions &&
+              searchQuery.length > 2 &&
+              searchSuggestions.length === 0 && (
+                <div className="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-lg shadow-lg mt-1 z-50">
+                  <div className="px-4 py-6 text-center">
+                    <div className="text-4xl mb-2">🔍</div>
+                    <div className="text-gray-600 mb-2">
+                      Aucun produit trouvé pour "{searchQuery}"
+                    </div>
+                    <div className="text-sm text-gray-500">
+                      Essayez: "iPhone", "laptop", "headphones"
+                    </div>
+                  </div>
+                </div>
+              )}
           </div>
 
           {/* Cart and User Actions */}
@@ -125,9 +246,12 @@ export default function Header() {
           <div className="md:hidden border-t border-gray-200 bg-white">
             {/* Mobile Search */}
             <div className="px-4 py-3">
-              <div className="relative">
+              <form onSubmit={handleSearch} className="relative">
                 <input
                   type="text"
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                  onKeyPress={handleKeyPress}
                   placeholder="Search products..."
                   className="w-full px-4 py-2 pl-10 text-gray-700 bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
@@ -146,10 +270,23 @@ export default function Header() {
                     />
                   </svg>
                 </div>
-              </div>
-              <button className="w-full mt-2 bg-blue-600 text-white py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors duration-300">
+              </form>
+              <button
+                onClick={handleSearch}
+                className="w-full mt-2 bg-blue-600 text-white py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors duration-300"
+              >
                 Search
               </button>
+
+              {/* Mobile No Results */}
+              {searchQuery.length > 2 && searchSuggestions.length === 0 && (
+                <div className="mt-3 p-3 bg-gray-50 rounded-lg text-center">
+                  <div className="text-2xl mb-1">🔍</div>
+                  <div className="text-sm text-gray-600">
+                    Aucun produit trouvé
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Mobile Navigation */}
