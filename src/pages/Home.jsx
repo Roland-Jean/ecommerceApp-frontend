@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Products from "../assets/Products.json";
 import Categories from "../assets/Category.json";
 
@@ -9,7 +9,12 @@ export default function Home() {
 
   // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
-  const productsPerPage = 9;
+  const productsPerPage = 9; // Änderung auf 9 Produkte pro Seite
+
+  // Reset pagination when component mounts (when returning to home)
+  useEffect(() => {
+    setCurrentPage(1);
+  }, []);
 
   // Berechne Pagination
   const indexOfLastProduct = currentPage * productsPerPage;
