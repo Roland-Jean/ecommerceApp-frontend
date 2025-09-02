@@ -2,13 +2,12 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import Products from "../assets/Products.json";
 
-export default function Header({setSearchItem}) {
+export default function Header({ setSearchItem }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchSuggestions, setSearchSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const navigate=useNavigate();
-  const Products=Products;
+  const navigate = useNavigate();
   // Fonction de recherche
   const handleSearch = (e) => {
     e.preventDefault();
@@ -22,7 +21,7 @@ export default function Header({setSearchItem}) {
       );
 
       if (results.length === 0) {
-       setSearchItem(Products); // Afficher message "Aucun produit trouvé" et suggérer des alternatives
+        setSearchItem(Products); // Afficher message "Aucun produit trouvé" et suggérer des alternatives
       } else {
         setSearchItem(results);
       }
@@ -48,10 +47,11 @@ export default function Header({setSearchItem}) {
 
       setSearchSuggestions(suggestions);
       setShowSuggestions(true);
-      setSearchItem([suggestions]);
+      setSearchItem(suggestions);
     } else {
       setShowSuggestions(false);
       setSearchSuggestions([]);
+      setSearchItem(Products);
     }
   };
 
