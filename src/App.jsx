@@ -11,8 +11,12 @@ function App() {
   return (
     <div>
       <BrowserRouter basename="/ecommerceApp-frontend">
-        <Header setSearchItem={setSearchItem} addCart={addCart}/>
-        <AppRoutes searchItem={searchItem} setAddCart={setAddCart}/>
+        <Header setSearchItem={setSearchItem} addCart={addCart} />
+        <AppRoutes
+          searchItem={searchItem}
+          setAddCart={setAddCart}
+          addCart={addCart}
+        />
         <Footer />
       </BrowserRouter>
     </div>

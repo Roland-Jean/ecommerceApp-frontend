@@ -7,7 +7,7 @@ import Register from '../Register';
 import ResetPassword from '../ResetPassword';
 import ProductDetails from "../ProductDetail";
 
-export default function AppRoutes({ searchItem, setAddCart }) {
+export default function AppRoutes({ searchItem, setAddCart,addCart }) {
   return (
     <Routes>
       <Route
@@ -19,7 +19,7 @@ export default function AppRoutes({ searchItem, setAddCart }) {
         element={<Home searchItem={searchItem} setAddCart={setAddCart} />}
       />
       {/* Add this */}
-      <Route path="/cart" element={<Pagnie />} />
+      <Route path="/cart" element={<Pagnie addCart={addCart} />} />
       <Route path="/checkout" element={<Checkout />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
