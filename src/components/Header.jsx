@@ -2,13 +2,12 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import Products from "../assets/Products.json";
 
-export default function Header() {
+export default function Header({ setSearchItem , addCart }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchSuggestions, setSearchSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const navigate = useNavigate();
-
   // Fonction de recherche
   const handleSearch = (e) => {
     e.preventDefault();
@@ -22,13 +21,9 @@ export default function Header() {
       );
 
       if (results.length === 0) {
-        // Afficher message "Aucun produit trouvé" et suggérer des alternatives
-        navigate(
-          `/search?q=${encodeURIComponent(searchQuery.trim())}&noresults=true`
-        );
+        setSearchItem(Products); // Afficher message "Aucun produit trouvé" et suggérer des alternatives
       } else {
-        // Naviguer vers la page de résultats avec le terme de recherche
-        navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+        setSearchItem(results);
       }
 
       setSearchQuery(""); // Reset search input
@@ -52,9 +47,11 @@ export default function Header() {
 
       setSearchSuggestions(suggestions);
       setShowSuggestions(true);
+      setSearchItem(suggestions);
     } else {
       setShowSuggestions(false);
       setSearchSuggestions([]);
+      setSearchItem(Products);
     }
   };
 
@@ -66,11 +63,12 @@ export default function Header() {
   };
 
   // Sélectionner une suggestion
-  const selectSuggestion = (suggestion) => {
+  function selectSuggestion(suggestion) {
     setSearchQuery(suggestion.name);
+    setSearchItem(suggestion); // Wrap in array
+    navigate(`/details/${suggestion.id}`); // Navigate to results
     setShowSuggestions(false);
-    navigate(`/search?q=${encodeURIComponent(suggestion.name)}`);
-  };
+  }
 
   return (
     <header className="bg-white shadow-lg sticky top-0 z-50 border-b border-gray-200">
@@ -185,7 +183,7 @@ export default function Header() {
                 />
               </div>
               <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold animate-pulse">
-                0
+                {addCart.length}
               </span>
               <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 <div className="bg-gray-800 text-white text-xs px-2 py-1 rounded whitespace-nowrap">

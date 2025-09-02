@@ -1,12 +1,19 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Products from "../assets/Products.json";
 import Categories from "../assets/Category.json";
 
-export default function Home() {
+export default function Home({ searchItem ,setAddCart}) {
   // Erweiterte Produktliste mit type-Eigenschaft für Sortierung
-  const allProducts = Products;
-
+  let navigate = useNavigate();
+  const selectProduct = (product) => {
+    navigate(`/details/${product.id}`);
+  };
+  const addtocart = (product) => {
+    setAddCart((prevCart) => [...prevCart, product]);
+  };
+  const [articles, setArticles] = useState([]);
+  let allProducts = Products;
   // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 9; // Änderung auf 9 Produkte pro Seite
@@ -14,23 +21,30 @@ export default function Home() {
   // Reset pagination when component mounts (when returning to home)
   useEffect(() => {
     setCurrentPage(1);
+    setArticles(allProducts);
   }, []);
-
+  useEffect(() => {
+    if (searchItem && searchItem.length > 0) {
+      setArticles(searchItem);
+    } else {
+      setArticles(Products);
+    }
+    setCurrentPage(1);
+  }, [searchItem]); // Remove setArticles from dependencies
   // Berechne Pagination
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-  const currentProducts = allProducts.slice(
+  const currentProducts = articles.slice(
     indexOfFirstProduct,
     indexOfLastProduct
   );
-  const totalPages = Math.ceil(allProducts.length / productsPerPage);
+  const totalPages = Math.ceil(articles.length / productsPerPage);
 
   // Pagination Funktionen
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
   const nextPage = () =>
     setCurrentPage((prev) => Math.min(prev + 1, totalPages));
   const prevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
-
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Category Menu */}
@@ -64,7 +78,10 @@ export default function Home() {
                 key={product.id}
                 className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 overflow-hidden"
               >
-                <div className="relative">
+                <div
+                  className="relative"
+                  onClick={() => selectProduct(product)}
+                >
                   <div className="h-48 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
                     <span className="text-6xl">{product.image}</span>
                   </div>
@@ -93,7 +110,10 @@ export default function Home() {
                         {product.originalPrice}
                       </span>
                     </div>
-                    <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-300 font-medium">
+                    <button
+                      onClick={() => addtocart(product)}
+                      className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-300 font-medium"
+                    >
                       Add to Cart
                     </button>
                   </div>
@@ -101,7 +121,6 @@ export default function Home() {
               </div>
             ))}
           </div>
-
           {/* Pagination */}
           {totalPages > 1 && (
             <div className="flex justify-center items-center mt-12 space-x-2">
