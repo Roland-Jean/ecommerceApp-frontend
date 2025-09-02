@@ -7,17 +7,21 @@ import Register from '../Register';
 import ResetPassword from '../ResetPassword';
 import ProductDetails from "../ProductDetail";
 
-export default function AppRoutes(){
-     return(
-             <Routes>
-                 <Route path="/" element={<Home />} />
-                 <Route path="/ecommerceApp-frontend/" element={<Home />} />  {/* Add this */}
-                 <Route path="/cart" element={<Pagnie />} />
-                 <Route path="/checkout" element={<Checkout />} />
-                 <Route path="/login" element={<Login />} />
-                 <Route path="/register" element={<Register />} />
-                 <Route path="/details" element={<ProductDetails />} />
-                 <Route path="/resetpassword" element={<ResetPassword />} />
-             </Routes>
+export default function AppRoutes({searchItem}){
+     return (
+       <Routes>
+         <Route path="/" element={<Home searchItem={searchItem} />} />
+         <Route
+           path="/ecommerceApp-frontend/"
+           element={<Home searchItem={searchItem} />}
+         />
+         {/* Add this */}
+         <Route path="/cart" element={<Pagnie />} />
+         <Route path="/checkout" element={<Checkout />} />
+         <Route path="/login" element={<Login />} />
+         <Route path="/register" element={<Register />} />
+         <Route path="/details/:id" element={<ProductDetails />} />
+         <Route path="/resetpassword" element={<ResetPassword />} />
+       </Routes>
      );
 }

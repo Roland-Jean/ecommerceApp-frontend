@@ -3,10 +3,11 @@ import { useState, useEffect } from "react";
 import Products from "../assets/Products.json";
 import Categories from "../assets/Category.json";
 
-export default function Home() {
+export default function Home({searchItem}) {
   // Erweiterte Produktliste mit type-Eigenschaft für Sortierung
-  const allProducts = Products;
 
+  const [articles, setArticles] = useState([]);
+  let allProducts = Products;
   // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 9; // Änderung auf 9 Produkte pro Seite
@@ -14,23 +15,30 @@ export default function Home() {
   // Reset pagination when component mounts (when returning to home)
   useEffect(() => {
     setCurrentPage(1);
+    setArticles(allProducts);
   }, []);
-
+  useEffect(() => {
+    if (searchItem && searchItem.length > 0) {
+      setArticles(searchItem);
+    } else {
+      setArticles(Products);
+    }
+    setCurrentPage(1);
+  }, [searchItem]); // Remove setArticles from dependencies
   // Berechne Pagination
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-  const currentProducts = allProducts.slice(
+  const currentProducts = articles.slice(
     indexOfFirstProduct,
     indexOfLastProduct
   );
-  const totalPages = Math.ceil(allProducts.length / productsPerPage);
+  const totalPages = Math.ceil(articles.length / productsPerPage);
 
   // Pagination Funktionen
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
   const nextPage = () =>
     setCurrentPage((prev) => Math.min(prev + 1, totalPages));
   const prevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
-
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Category Menu */}
@@ -101,7 +109,6 @@ export default function Home() {
               </div>
             ))}
           </div>
-
           {/* Pagination */}
           {totalPages > 1 && (
             <div className="flex justify-center items-center mt-12 space-x-2">
