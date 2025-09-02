@@ -7,11 +7,12 @@ import { useState } from 'react';
 
 function App() {
   const[searchItem,setSearchItem]=useState([]);
+  const[addCart,setAddCart] = useState([]);
   return (
     <div>
       <BrowserRouter basename="/ecommerceApp-frontend">
-        <Header setSearchItem={setSearchItem} />
-        <AppRoutes searchItem={searchItem}/>
+        <Header setSearchItem={setSearchItem} addCart={addCart}/>
+        <AppRoutes searchItem={searchItem} setAddCart={setAddCart}/>
         <Footer />
       </BrowserRouter>
     </div>

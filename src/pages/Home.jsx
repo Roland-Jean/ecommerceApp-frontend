@@ -1,11 +1,17 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Products from "../assets/Products.json";
 import Categories from "../assets/Category.json";
 
-export default function Home({searchItem}) {
+export default function Home({ searchItem ,setAddCart}) {
   // Erweiterte Produktliste mit type-Eigenschaft für Sortierung
-
+  let navigate = useNavigate();
+  const selectProduct = (product) => {
+    navigate(`/details/${product.id}`);
+  };
+  const addtocart = (product) => {
+    setAddCart((prevCart) => [...prevCart, product]);
+  };
   const [articles, setArticles] = useState([]);
   let allProducts = Products;
   // Pagination State
@@ -72,7 +78,10 @@ export default function Home({searchItem}) {
                 key={product.id}
                 className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 overflow-hidden"
               >
-                <div className="relative">
+                <div
+                  className="relative"
+                  onClick={() => selectProduct(product)}
+                >
                   <div className="h-48 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
                     <span className="text-6xl">{product.image}</span>
                   </div>
@@ -101,7 +110,10 @@ export default function Home({searchItem}) {
                         {product.originalPrice}
                       </span>
                     </div>
-                    <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-300 font-medium">
+                    <button
+                      onClick={() => addtocart(product)}
+                      className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-300 font-medium"
+                    >
                       Add to Cart
                     </button>
                   </div>
