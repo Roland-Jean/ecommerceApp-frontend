@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import Products from "../assets/Products.json";
 
-export default function Header({ setSearchItem , addCart }) {
+export default function Header({ setSearchItem, addCart }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchSuggestions, setSearchSuggestions] = useState([]);
@@ -130,7 +130,10 @@ export default function Header({ setSearchItem , addCart }) {
                 {searchSuggestions.map((suggestion) => (
                   <div
                     key={suggestion.id}
-                    onClick={() => selectSuggestion(suggestion)}
+                    onClick={() => {
+                      selectSuggestion(suggestion);
+                      console.log("Click detected on suggestion");
+                    }}
                     className="flex items-center px-4 py-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0"
                   >
                     <span className="text-2xl mr-3">{suggestion.image}</span>
