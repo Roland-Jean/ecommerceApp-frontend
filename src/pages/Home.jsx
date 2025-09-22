@@ -17,20 +17,23 @@ export default function Home({ searchItem ,setAddCart}) {
   // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 9; // Änderung auf 9 Produkte pro Seite
+  const [categoryProduct , setCategoryProduct] = useState();
+  useEffect(() => {
+  let filtered = Products;
 
-  // Reset pagination when component mounts (when returning to home)
-  useEffect(() => {
-    setCurrentPage(1);
-    setArticles(allProducts);
-  }, []);
-  useEffect(() => {
-    if (searchItem && searchItem.length > 0) {
-      setArticles(searchItem);
-    } else {
-      setArticles(Products);
-    }
-    setCurrentPage(1);
-  }, [searchItem]); // Remove setArticles from dependencies
+  if (searchItem && searchItem.length > 0) {
+    // Search overrides everything
+    filtered = searchItem;
+  } else if (categoryProduct) {
+    // Otherwise filter by category
+    filtered = Products.filter(
+      product => product.category === categoryProduct
+    );
+  }
+
+  setArticles(filtered);
+  setCurrentPage(1);
+}, [searchItem, categoryProduct]);
   // Berechne Pagination
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
@@ -45,6 +48,9 @@ export default function Home({ searchItem ,setAddCart}) {
   const nextPage = () =>
     setCurrentPage((prev) => Math.min(prev + 1, totalPages));
   const prevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
+  function selectCategory(category){
+    setCategoryProduct(category);
+  }
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Category Menu */}
@@ -52,10 +58,10 @@ export default function Home({ searchItem ,setAddCart}) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
             {Categories.map((category, index) => (
-              <Link
+              <button
                 key={index}
-                to={`/category/${category.name.toLowerCase()}`}
                 className="group"
+                onClick={()=>selectCategory(category.name.toLowerCase())}
               >
                 <div
                   className={`bg-gradient-to-br ${category.color} p-6 rounded-xl text-white text-center hover:shadow-xl transition-all duration-300 transform hover:scale-105`}
@@ -63,7 +69,7 @@ export default function Home({ searchItem ,setAddCart}) {
                   <div className="text-3xl mb-3">{category.icon}</div>
                   <h3 className="font-semibold text-sm">{category.name}</h3>
                 </div>
-              </Link>
+              </button>
             ))}
           </div>
         </div>
