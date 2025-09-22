@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import Products from "../assets/Products.json";
 
-export default function Header({ setSearchItem, addCart }) {
+export default function Header({ setSearchItem, addCart ,setAllProducts }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchSuggestions, setSearchSuggestions] = useState([]);
@@ -70,6 +70,10 @@ export default function Header({ setSearchItem, addCart }) {
     setShowSuggestions(false);
   }
 
+  function showallProducts(){setAllProducts(Products);
+  }
+  
+
   return (
     <header className="bg-white shadow-lg sticky top-0 z-50 border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -79,6 +83,7 @@ export default function Header({ setSearchItem, addCart }) {
             <Link
               to="/"
               className="text-2xl font-bold text-blue-600 hover:text-blue-700 transition-colors duration-300"
+              onClick={()=>{showallProducts()}}
             >
               🛍️ E-commerce
             </Link>

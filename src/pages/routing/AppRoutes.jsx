@@ -14,10 +14,6 @@ export default function AppRoutes({ searchItem, setAddCart,addCart }) {
         path="/"
         element={<Home searchItem={searchItem} setAddCart={setAddCart} />}
       />
-      <Route
-        path="/ecommerceApp-frontend/"
-        element={<Home searchItem={searchItem} setAddCart={setAddCart} />}
-      />
       {/* Add this */}
       <Route path="/cart" element={<Pagnie addCart={addCart} />} />
       <Route path="/checkout" element={<Checkout />} />
