@@ -7,8 +7,8 @@ export default function Register() {
     register,
     handleSubmit,
     watch,
-    formState: { errors },
-  } = useForm();
+    formState: { errors , isValid },
+  } = useForm({mode:"onTouched"});
 
   const [step, setStep] = useState(0);
   const name = watch("firstName");
@@ -73,7 +73,10 @@ export default function Register() {
               <h3 className="text-sm text-gray-600 mb-2">Hi {name}, welcome!</h3>
 
               <input
-                {...register("email", { required: "Email is required" })}
+                {...register("email", { required: "Email is required",pattern: {
+              value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+              message: "Invalid email address",
+            },minLength:3 })}
                 placeholder="Email"
                 className="w-full px-4 py-2 border rounded"
               />
@@ -134,7 +137,8 @@ export default function Register() {
               <button
                 type="button"
                 onClick={nextStep}
-                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                className="w-25 bg-blue-600 text-white font-semibold py-2 px-2 rounded-md hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={!isValid}
               >
                 Next
               </button>
@@ -142,6 +146,7 @@ export default function Register() {
               <button
                 type="submit"
                 className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+                disabled={!isValid}
               >
                 Submit
               </button>

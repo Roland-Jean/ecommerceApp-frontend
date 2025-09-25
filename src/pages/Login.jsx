@@ -1,4 +1,4 @@
-import { useState } from "react";
+import {  useState } from "react";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 
@@ -7,8 +7,8 @@ export default function Login() {
   const {
     register,
     handleSubmit,
-    formState: { errors },
-  } = useForm();
+    formState: { errors,isValid },
+  } = useForm({mode:"onTouched"});
 
   const onSubmit = (data) => console.log(data);
 
@@ -53,7 +53,10 @@ export default function Login() {
               type="email"
               placeholder="example@gmail.com"
               autoFocus
-              {...register("email", { required: "Email is required" })}
+              {...register("email", {  required: "Email is required" , pattern: {
+              value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+              message: "Invalid email address",
+            },minLength:4})}
               className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                 errors.email ? "border-red-500" : "border-gray-300"
               }`}
@@ -75,7 +78,7 @@ export default function Login() {
               id="password"
               type="password"
               placeholder="••••••••"
-              {...register("password", { required: "Password is required" })}
+              {...register("password", { required: "Password is required",minLength:7 })}
               className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                 errors.password ? "border-red-500" : "border-gray-300"
               }`}
@@ -92,6 +95,7 @@ export default function Login() {
           <button
             type="submit"
             className="w-full bg-blue-600 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={!isValid}
           >
             Login
           </button>
