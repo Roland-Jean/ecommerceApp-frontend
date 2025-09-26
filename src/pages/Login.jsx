@@ -1,6 +1,7 @@
 import {  useState } from "react";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import { loginService } from "../services/authentificationService";
 
 export default function Login() {
   const [activeTab, setActiveTab] = useState("login");
@@ -10,7 +11,7 @@ export default function Login() {
     formState: { errors,isValid },
   } = useForm({mode:"onTouched"});
 
-  const onSubmit = (data) => console.log(data);
+  const onSubmit = (data) => loginService(data);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 to-gray-100">
