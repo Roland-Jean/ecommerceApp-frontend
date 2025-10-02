@@ -5,11 +5,11 @@ export const getAllProducts = () => {
 };
 
 export const getProductById = (id) => {
-  return axiosInstance.get(`/products/${id}`); // Backticks + Parameter
+  return axiosInstance.get(`/product/${id}`); // Backticks + Parameter
 };
 
 export const deleteProductById = (id) => {
-  return axiosInstance.delete(`/products/${id}`); // Backticks + Parameter
+  return axiosInstance.delete(`/product/${id}`); // Backticks + Parameter
 };
 
 export const deleteAllProducts = () => {

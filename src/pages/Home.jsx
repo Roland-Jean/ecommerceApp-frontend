@@ -1,6 +1,5 @@
 import { Await, Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import Categories from "../assets/Category.json";
 import { getproductsService } from "../services/getProductService";
 import HomePlaceHolder from "../assets/placeholders/Homeplaceholder";
 
@@ -33,8 +32,7 @@ const [error, setError] = useState(null);
         setLoading(true);
         setError(null);
         const productsData = await getproductsService();
-        console.log('Fetched products:', productsData);
-        setProducts(productsData || []);
+        setProducts(productsData.data);
       } catch (error) {
         console.error('Error fetching products:', error);
         setError('Failed to load products. Please try again.');
@@ -137,7 +135,7 @@ const [error, setError] = useState(null);
           </div>
           
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-            {Categories && Categories.map((category, index) => (
+            {Products.category && Products.category.map((category, index) => (
               <button
                 key={index}
                 className="group"

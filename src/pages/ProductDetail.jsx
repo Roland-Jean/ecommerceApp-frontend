@@ -1,6 +1,6 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import Products from "../assets/Products.json";
+import { getproductsService } from "../services/getProductService";
 
 export default function ProductDetails() {
   const { id } = useParams();
@@ -9,7 +9,14 @@ export default function ProductDetails() {
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
   const [relatedProducts, setRelatedProducts] = useState([]);
-
+  const[Products,setProducts]=useState([])
+  useEffect(() => {
+    const fetchProducts = async () => {
+      const productsData = await getproductsService();
+      setProducts(productsData.data);
+    };
+    fetchProducts();
+  }, []);
   useEffect(() => {
     // Trouver le produit par ID
     const foundProduct = Products.find((p) => p.id === parseInt(id));
@@ -22,7 +29,7 @@ export default function ProductDetails() {
       ).slice(0, 4);
       setRelatedProducts(related);
     }
-  }, [id]);
+  }, [id,Products]);
 
   if (!product) {
     return (
