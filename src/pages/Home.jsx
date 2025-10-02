@@ -1,8 +1,10 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Await, Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import Products from "../assets/Products.json";
 import Categories from "../assets/Category.json";
+import { getproductsService } from "../services/getProductService";
+import HomePlaceHolder from "../assets/placeholders/Homeplaceholder";
 
+// Home component
 export default function Home({ searchItem, setAddCart, allProducts }) {
   const navigate = useNavigate();
   
@@ -10,9 +12,10 @@ export default function Home({ searchItem, setAddCart, allProducts }) {
   const [articles, setArticles] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [categoryProduct, setCategoryProduct] = useState(null);
-  
+  const [loading,setLoading]=useState(true);
+  const [Products,setProducts]=useState([])
   const productsPerPage = 9;
-
+const [error, setError] = useState(null);
   // Product selection handler
   const selectProduct = (product) => {
     navigate(`/details/${product.id}`);
@@ -24,12 +27,35 @@ export default function Home({ searchItem, setAddCart, allProducts }) {
       setAddCart((prevCart) => [...prevCart, product]);
     }
   };
-
+ useEffect(()=>{
+   const fetchProducts = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const productsData = await getproductsService();
+        console.log('Fetched products:', productsData);
+        setProducts(productsData || []);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+        setError('Failed to load products. Please try again.');
+        setProducts([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    // Only fetch if we don't have products from props
+    if (!allProducts || allProducts.length === 0) {
+      fetchProducts();
+    } else {
+      setProducts(allProducts);
+      setLoading(false);
+    }
+ },[allProducts])
   // Effect to handle filtering and product updates
   useEffect(() => {
-    // Ensure allProducts exists and is an array
     const baseProducts = Array.isArray(allProducts) ? allProducts : Products || [];
-    
+
     let filtered = baseProducts;
     
     if (searchItem && Array.isArray(searchItem) && searchItem.length > 0) {
@@ -44,7 +70,7 @@ export default function Home({ searchItem, setAddCart, allProducts }) {
     
     setArticles(filtered);
     setCurrentPage(1); // Reset to first page when filtering
-  }, [searchItem, categoryProduct, allProducts]);
+  }, [searchItem, categoryProduct, allProducts,Products]);
 
   // Pagination calculations
   const indexOfLastProduct = currentPage * productsPerPage;
@@ -69,6 +95,27 @@ export default function Home({ searchItem, setAddCart, allProducts }) {
   const clearCategoryFilter = () => {
     setCategoryProduct(null);
   };
+    // Show error state
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-4xl mb-4">❌</div>
+          <p className="text-red-600 mb-4">{error}</p>
+          <button 
+            onClick={() => window.location.reload()} 
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+    // Show loading state
+  if (loading) {
+    return <HomePlaceHolder />;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
