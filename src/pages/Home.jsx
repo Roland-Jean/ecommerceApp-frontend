@@ -85,7 +85,9 @@ export default function Home() {
 
   // Product selection handler
   const selectProduct = (product) => {
-    navigate(`/details/${product.id}`);
+    console.log('Selecting product:', product); // Debug log
+  console.log('Navigating to:', `/product/${product.id}`); // Debug log
+    navigate(`/product/${product.id}`);
   };
 
   // Add to cart handler
@@ -248,7 +250,7 @@ export default function Home() {
                           e.stopPropagation();
                           addToCart(product);
                         }}
-                        className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-300 font-medium"
+                        className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-300 font-medium cursor-pointer"
                       >
                         Add to Cart
                       </button>

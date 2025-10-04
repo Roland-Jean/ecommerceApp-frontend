@@ -56,9 +56,10 @@ export default function Header() {
 
   // Handle suggestion selection
   const selectSuggestion = (product) => {
+    console.log('Selecting suggestion:', product); // Debug log
     dispatch(setQuery(product.name));
     setShowSuggestions(false);
-    navigate(`/details/${product.id}`);
+    navigate(`/product/${product.id}`);
   };
 
   // Handle logo click (clear all filters)
@@ -71,6 +72,7 @@ export default function Header() {
   // Handle cart toggle
   const handleCartToggle = () => {
     dispatch(toggleCart());
+    navigate('/cart');
   };
 
   return (
@@ -149,7 +151,7 @@ export default function Header() {
             {/* Cart Button */}
             <button
               onClick={handleCartToggle}
-              className="relative p-2 text-gray-600 hover:text-blue-600 transition-colors duration-300 group"
+              className="relative p-2 text-gray-600 hover:text-blue-600 transition-colors duration-300 group cursor-pointer"
             >
               <div className="w-8 h-8 flex items-center justify-center">
                 🛒

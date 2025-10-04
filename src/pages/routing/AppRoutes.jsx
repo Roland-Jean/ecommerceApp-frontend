@@ -19,7 +19,7 @@ export default function AppRoutes({ searchItem, setAddCart,addCart }) {
       <Route path="/checkout" element={<Checkout />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
-      <Route path="/details/:id" element={<ProductDetails />} />
+      <Route path="/product/:id" element={<ProductDetails />} />
       <Route path="/resetpassword" element={<ResetPassword />} />
     </Routes>
   );

@@ -13,9 +13,9 @@ import store from './store/store';
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 1000 * 60 * 5, // 5 minutes
+      staleTime: 1000 * 60 * 5, // 5 minuntes time to be consider data as fresh
       refetchInterval: 1000 * 30, // every 30 seconds
-  refetchOnWindowFocus: true,
+  refetchOnWindowFocus: true, //refresh when user switch back to  the tab
     },
   },
 });
@@ -23,7 +23,7 @@ const queryClient = new QueryClient({
 function App() {
   return (
     <React.StrictMode>
-      <Provider store={store}>
+      <Provider store={store}> 
         <QueryClientProvider client={queryClient}>
           <BrowserRouter basename="/ecommerceApp-frontend">
             <Header />
