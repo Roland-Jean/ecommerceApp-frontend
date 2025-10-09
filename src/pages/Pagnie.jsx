@@ -1,40 +1,47 @@
+// src/pages/Pagnie.jsx
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import { useSelector, useDispatch } from 'react-redux';
+import { updateQuantity, removeItem, deleteItem, clearCart } from '../store/cartSlice';
 
-export default function Pagnie({ addCart }) {
+export default function Pagnie() {
+  const dispatch = useDispatch();
+  
+  // Get cart data from Redux instead of props
+  const cartItems = useSelector(state => state.cart.items);
+  const cartTotal = useSelector(state => state.cart.total);
+  const cartItemCount = useSelector(state => state.cart.itemCount);
+  
   const [promoCode, setPromoCode] = useState("");
   const [isPromoApplied, setIsPromoApplied] = useState(false);
 
-  // Calculate totals based on addCart items
-  const subtotal = addCart.reduce(
-    (total, item) =>
-      total + parseFloat(item.price.replace("$", "")) * (item.quantity || 1),
-    0
-  );
+  // Calculate totals based on Redux cart items
+  const subtotal = cartItems.reduce((total, item) => {
+    const price = parseFloat(item.price?.replace("FCFA", "")) || 0;
+    return total + (price * (item.quantity || 1));
+  }, 0);
+  
   const shipping = subtotal > 0 ? 5.99 : 0;
   const discount = isPromoApplied ? subtotal * 0.1 : 0; // 10% discount
   const total = subtotal + shipping - discount;
 
-  const updateQuantity = (id, newQuantity) => {
-    if (newQuantity < 1) return;
-
-    // Find the item and update its quantity
-    const updatedCart = addCart.map((item) =>
-      item.id === id ? { ...item, quantity: newQuantity } : item
-    );
-
-    // You might need to pass this back to parent component
-    // For now, we'll just work with local display
-    console.log("Updated quantity for item:", id, "to:", newQuantity);
+  // Update quantity using Redux
+  const handleUpdateQuantity = (id, newQuantity) => {
+    if (newQuantity < 1) {
+      dispatch(deleteItem(id)); // Remove if quantity becomes 0
+    } else {
+      dispatch(updateQuantity({ id, quantity: newQuantity }));
+    }
   };
 
-  const removeItem = (id) => {
-    // Filter out the item to remove
-    const updatedCart = addCart.filter((item) => item.id !== id);
-    console.log("Removed item:", id);
+  // Remove item using Redux
+  const handleRemoveItem = (id) => {
+    dispatch(deleteItem(id));
+  };
 
-    // You might need to pass this back to parent component
-    // For now, we'll just work with local display
+  // Clear entire cart
+  const handleClearCart = () => {
+    dispatch(clearCart());
   };
 
   const applyPromoCode = () => {
@@ -46,7 +53,8 @@ export default function Pagnie({ addCart }) {
     }
   };
 
-  if (!addCart || addCart.length === 0) {
+  // Empty cart state
+  if (!cartItems || cartItems.length === 0) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 py-16 px-4">
         <div className="max-w-4xl mx-auto">
@@ -63,18 +71,8 @@ export default function Pagnie({ addCart }) {
               className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-2xl hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl"
             >
               Continue Shopping
-              <svg
-                className="w-6 h-6 ml-3"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M17 8l4 4m0 0l-4 4m4-4H3"
-                />
+              <svg className="w-6 h-6 ml-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
               </svg>
             </Link>
           </div>
@@ -102,31 +100,29 @@ export default function Pagnie({ addCart }) {
             <div className="bg-white rounded-2xl shadow-xl p-6 mb-6">
               <div className="flex items-center justify-between mb-8">
                 <h2 className="text-2xl font-bold text-gray-900">
-                  Cart Items ({addCart.length})
+                  Cart Items ({cartItemCount})
                 </h2>
-                <Link
-                  to="/"
-                  className="text-blue-600 hover:text-blue-700 font-medium flex items-center gap-2"
-                >
-                  Continue Shopping
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
+                <div className="flex gap-4">
+                  <Link
+                    to="/"
+                    className="text-blue-600 hover:text-blue-700 font-medium flex items-center gap-2"
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
-                </Link>
+                    Continue Shopping
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </Link>
+                  <button
+                    onClick={handleClearCart}
+                    className="text-red-600 hover:text-red-700 font-medium cursor-pointer"
+                  >
+                    Clear Cart
+                  </button>
+                </div>
               </div>
 
               <div className="space-y-6">
-                {addCart.map((item) => (
+                {cartItems.map((item) => (
                   <div
                     key={item.id}
                     className="flex items-center gap-6 p-6 border border-gray-200 rounded-2xl hover:shadow-lg transition-all duration-300"
@@ -144,7 +140,7 @@ export default function Pagnie({ addCart }) {
                       </p>
                       <div className="flex items-center gap-2">
                         <div className="flex text-yellow-400 text-sm">
-                          {"★★★★★".slice(0, Math.floor(item.rating || 4))}
+                          {"★".repeat(Math.floor(item.rating || 4))}
                         </div>
                         <span className="text-gray-500 text-xs">
                           ({item.rating || 4.0})
@@ -161,24 +157,23 @@ export default function Pagnie({ addCart }) {
                           {item.originalPrice}
                         </p>
                       )}
+                      <p className="text-sm text-gray-600 mt-1">
+                        {item.quantity} × {parseFloat(item.price?.replace("FCFA", "")) || 0} FCFA
+                      </p>
                     </div>
 
                     <div className="flex items-center gap-3">
                       <button
-                        onClick={() =>
-                          updateQuantity(item.id, (item.quantity || 1) - 1)
-                        }
+                        onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
                         className="w-10 h-10 flex items-center justify-center border border-gray-300 rounded-xl hover:bg-gray-100 transition-colors text-xl"
                       >
                         −
                       </button>
                       <span className="w-8 text-center font-medium text-lg">
-                        {item.quantity || 1}
+                        {item.quantity}
                       </span>
                       <button
-                        onClick={() =>
-                          updateQuantity(item.id, (item.quantity || 1) + 1)
-                        }
+                        onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
                         className="w-10 h-10 flex items-center justify-center border border-gray-300 rounded-xl hover:bg-gray-100 transition-colors text-xl"
                       >
                         +
@@ -186,22 +181,12 @@ export default function Pagnie({ addCart }) {
                     </div>
 
                     <button
-                      onClick={() => removeItem(item.id)}
+                      onClick={() => handleRemoveItem(item.id)}
                       className="p-3 text-gray-400 hover:text-red-500 transition-colors rounded-xl hover:bg-red-50"
                       title="Remove item"
                     >
-                      <svg
-                        className="w-6 h-6"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                        />
+                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                       </svg>
                     </button>
                   </div>
@@ -247,27 +232,25 @@ export default function Pagnie({ addCart }) {
               <div className="space-y-4 mb-6">
                 <div className="flex justify-between text-lg">
                   <span className="text-gray-600">Subtotal</span>
-                  <span className="font-semibold">${subtotal.toFixed(2)}</span>
+                  <span className="font-semibold">{subtotal.toFixed(2)} FCFA</span>
                 </div>
 
                 <div className="flex justify-between text-lg">
                   <span className="text-gray-600">Shipping</span>
-                  <span className="font-semibold">${shipping.toFixed(2)}</span>
+                  <span className="font-semibold">{shipping.toFixed(2)} FCFA</span>
                 </div>
 
                 {discount > 0 && (
                   <div className="flex justify-between text-lg text-green-600">
-                    <span>Discount</span>
-                    <span className="font-semibold">
-                      -${discount.toFixed(2)}
-                    </span>
+                    <span>Discount (10%)</span>
+                    <span className="font-semibold">-{discount.toFixed(2)} FCFA</span>
                   </div>
                 )}
 
                 <div className="border-t border-gray-200 pt-4">
                   <div className="flex justify-between text-xl font-bold">
                     <span>Total</span>
-                    <span className="text-blue-600">${total.toFixed(2)}</span>
+                    <span className="text-blue-600">{total.toFixed(2)} FCFA</span>
                   </div>
                 </div>
               </div>

@@ -1,26 +1,40 @@
+// src/App.jsx
+import React from 'react';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import AppRoutes from './pages/routing/AppRoutes';
-import { BrowserRouter } from 'react-router-dom'
-import './App.css'
-import { useState } from 'react';
+import { BrowserRouter } from 'react-router-dom';
+import './App.css';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { Provider } from 'react-redux';
+import store from './store/store';
+// Move QueryClient outside component to prevent recreating on each render
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5, // 5 minuntes time to be consider data as fresh
+      refetchInterval: 1000 * 30, // every 30 seconds
+  refetchOnWindowFocus: true, //refresh when user switch back to  the tab
+    },
+  },
+});
 
 function App() {
-  const[searchItem,setSearchItem]=useState([]);
-  const[addCart,setAddCart] = useState([]);
   return (
-    <div>
-      <BrowserRouter basename="/ecommerceApp-frontend">
-        <Header setSearchItem={setSearchItem} addCart={addCart} />
-        <AppRoutes
-          searchItem={searchItem}
-          setAddCart={setAddCart}
-          addCart={addCart}
-        />
-        <Footer />
-      </BrowserRouter>
-    </div>
+    <React.StrictMode>
+      <Provider store={store}> 
+        <QueryClientProvider client={queryClient}>
+          <BrowserRouter basename="/ecommerceApp-frontend">
+            <Header />
+            <AppRoutes />
+            <Footer />
+          </BrowserRouter>
+          <ReactQueryDevtools initialIsOpen={false} />
+        </QueryClientProvider>
+      </Provider>
+    </React.StrictMode>
   );
 }
 
-export default App
+export default App;
