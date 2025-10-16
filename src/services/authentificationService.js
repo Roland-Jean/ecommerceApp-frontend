@@ -1,19 +1,20 @@
+import { Navigate } from "react-router-dom";
 import { loginUser, registerUser } from "../api/auth";
+import toast from "react-hot-toast";
 
 // Login Service
 export const loginService = async (user) => {
   try {
     const response = await loginUser(user.email, user.password);
 
-    // Token und User-Daten speichern
     if (response.token) {
       localStorage.setItem("authToken", response.token);
       localStorage.setItem("user", JSON.stringify(response.user));
+      toast.success("Login successful");
     }
-
     return response;
   } catch (error) {
-    console.error("Login service error:", error);
+    toast.error("Login failed. Please check your credentials.");
     throw error;
   }
 };
@@ -23,7 +24,7 @@ export const logoutService = () => {
   // Token und User-Daten aus localStorage entfernen
   localStorage.removeItem("authToken");
   localStorage.removeItem("user");
-
+  toast.success("Logout successful");
   return Promise.resolve({ success: true, message: "Logout successful" });
 };
 
@@ -31,13 +32,6 @@ export const logoutService = () => {
 export const registerUserService = async (userData) => {
   try {
     const response = await registerUser(userData);
-
-    // Optional: Automatisches Login nach erfolgreicher Registrierung
-    if (response.token) {
-      localStorage.setItem("authToken", response.token);
-      localStorage.setItem("user", JSON.stringify(response.user));
-    }
-
     return response;
   } catch (error) {
     console.error("Registration service error:", error);

@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import { registerUserService } from "../services/authentificationService";
+import toast from "react-hot-toast";
 
 export default function Register() {
   const {
@@ -13,9 +15,20 @@ export default function Register() {
   const [step, setStep] = useState(0);
   const name = watch("firstName");
 
-  const onSubmit = (data) => {
-    console.log("Form submitted:", data);
-  };
+ const onSubmit = async (data) => {
+   const { confirmedPassword, ...userData } = data;
+
+   try {
+     const response = await registerUserService(userData);
+     toast.success(
+       "Registration successful! Please check your email to verify your account."
+     );
+     // Optionally redirect or clear form here
+   } catch (error) {
+     toast.error("Registration failed. Please try again.");
+     // Optionally log error or show detailed message
+   }
+ };
 
   const nextStep = () => setStep((prev) => Math.min(prev + 1, 2));
   const prevStep = () => setStep((prev) => Math.max(prev - 1, 0));
@@ -45,56 +58,80 @@ export default function Register() {
             <>
               <h2 className="text-lg font-semibold">Step 1: Personal Info</h2>
               <input
-                {...register("firstName", { required: "First name is required" })}
+                {...register("firstName", {
+                  required: "First name is required",
+                })}
                 placeholder="First Name"
                 className="w-full px-4 py-2 border rounded"
               />
-              {errors.firstName && <p className="text-red-500">{errors.firstName.message}</p>}
+              {errors.firstName && (
+                <p className="text-red-500">{errors.firstName.message}</p>
+              )}
 
               <input
                 {...register("lastName", { required: "Last name is required" })}
                 placeholder="Last Name"
                 className="w-full px-4 py-2 border rounded"
               />
-              {errors.lastName && <p className="text-red-500">{errors.lastName.message}</p>}
+              {errors.lastName && (
+                <p className="text-red-500">{errors.lastName.message}</p>
+              )}
 
               <input
                 type="date"
-                {...register("dateOfBirth", { required: "Date of birth is required" })}
+                {...register("dateOfBirth", {
+                  required: "Date of birth is required",
+                })}
                 className="w-full px-4 py-2 border rounded"
               />
-              {errors.dateOfBirth && <p className="text-red-500">{errors.dateOfBirth.message}</p>}
+              {errors.dateOfBirth && (
+                <p className="text-red-500">{errors.dateOfBirth.message}</p>
+              )}
             </>
           )}
 
           {step === 1 && (
             <>
               <h2 className="text-lg font-semibold">Step 2: Contact Info</h2>
-              <h3 className="text-sm text-gray-600 mb-2">Hi {name}, welcome!</h3>
+              <h3 className="text-sm text-gray-600 mb-2">
+                Hi {name}, welcome!
+              </h3>
 
               <input
-                {...register("email", { required: "Email is required",pattern: {
-              value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
-              message: "Invalid email address",
-            },minLength:3 })}
+                {...register("email", {
+                  required: "Email is required",
+                  pattern: {
+                    value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+                    message: "Invalid email address",
+                  },
+                  minLength: 3,
+                })}
                 placeholder="Email"
                 className="w-full px-4 py-2 border rounded"
               />
-              {errors.email && <p className="text-red-500">{errors.email.message}</p>}
+              {errors.email && (
+                <p className="text-red-500">{errors.email.message}</p>
+              )}
 
               <input
-                {...register("phoneNumber", { required: "Phone number is required" })}
+                {...register("phoneNumber", {
+                  required: "Phone number is required",
+                })}
                 placeholder="Phone Number"
                 className="w-full px-4 py-2 border rounded"
               />
-              {errors.phoneNumber && <p className="text-red-500">{errors.phoneNumber.message}</p>}
+              {errors.phoneNumber && (
+                <p className="text-red-500">{errors.phoneNumber.message}</p>
+              )}
 
               <input
                 {...register("address", { required: "Address is required" })}
                 placeholder="Address"
                 className="w-full px-4 py-2 border rounded"
               />
-              {errors.address && <p className="text-red-500">{errors.address.message}</p>}
+              {errors.address && (
+                <p className="text-red-500">{errors.address.message}</p>
+              )}
             </>
           )}
 
@@ -108,16 +145,24 @@ export default function Register() {
                 placeholder="Password"
                 className="w-full px-4 py-2 border rounded"
               />
-              {errors.password && <p className="text-red-500">{errors.password.message}</p>}
+              {errors.password && (
+                <p className="text-red-500">{errors.password.message}</p>
+              )}
 
               <input
                 type="password"
-                {...register("confirmedPassword", { required: "Confirm your password" })}
+                {...register("confirmedPassword", {
+                  required: "Confirm your password",
+                  validate: (value) =>
+                    value === watch("password") || "Passwords do not match",
+                })}
                 placeholder="Confirm Password"
                 className="w-full px-4 py-2 border rounded"
               />
               {errors.confirmedPassword && (
-                <p className="text-red-500">{errors.confirmedPassword.message}</p>
+                <p className="text-red-500">
+                  {errors.confirmedPassword.message}
+                </p>
               )}
             </>
           )}
