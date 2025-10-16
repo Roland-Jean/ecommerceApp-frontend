@@ -1,26 +1,43 @@
 // src/pages/Pagnie.jsx
 import { Link } from "react-router-dom";
 import { useState } from "react";
-import { useSelector, useDispatch } from 'react-redux';
-import { updateQuantity, removeItem, deleteItem, clearCart } from '../store/cartSlice';
+import { useSelector, useDispatch } from "react-redux";
+import {
+  updateQuantity,
+  removeItem,
+  deleteItem,
+  clearCart,
+} from "../store/cartSlice";
+
+// Helper function to extract price safely
+const getPrice = (price) => {
+  if (typeof price === "number") {
+    return price;
+  }
+  if (typeof price === "string") {
+    // Remove currency symbols and convert to number
+    return parseFloat(price.replace(/[^0-9.-]+/g, "")) || 0;
+  }
+  return 0;
+};
 
 export default function Pagnie() {
   const dispatch = useDispatch();
-  
-  // Get cart data from Redux instead of props
-  const cartItems = useSelector(state => state.cart.items);
-  const cartTotal = useSelector(state => state.cart.total);
-  const cartItemCount = useSelector(state => state.cart.itemCount);
-  
+
+  // Get cart data from Redux
+  const cartItems = useSelector((state) => state.cart.items);
+  const cartTotal = useSelector((state) => state.cart.total);
+  const cartItemCount = useSelector((state) => state.cart.itemCount);
+
   const [promoCode, setPromoCode] = useState("");
   const [isPromoApplied, setIsPromoApplied] = useState(false);
 
-  // Calculate totals based on Redux cart items
+  // Calculate totals safely
   const subtotal = cartItems.reduce((total, item) => {
-    const price = parseFloat(item.price?.replace("FCFA", "")) || 0;
-    return total + (price * (item.quantity || 1));
+    const price = getPrice(item.price);
+    return total + price * (item.quantity || 1);
   }, 0);
-  
+
   const shipping = subtotal > 0 ? 5.99 : 0;
   const discount = isPromoApplied ? subtotal * 0.1 : 0; // 10% discount
   const total = subtotal + shipping - discount;
@@ -28,7 +45,7 @@ export default function Pagnie() {
   // Update quantity using Redux
   const handleUpdateQuantity = (id, newQuantity) => {
     if (newQuantity < 1) {
-      dispatch(deleteItem(id)); // Remove if quantity becomes 0
+      dispatch(deleteItem(id));
     } else {
       dispatch(updateQuantity({ id, quantity: newQuantity }));
     }
@@ -53,6 +70,12 @@ export default function Pagnie() {
     }
   };
 
+  // Format price for display
+  const formatPrice = (price) => {
+    const numericPrice = getPrice(price);
+    return `$${numericPrice.toFixed(2)}`;
+  };
+
   // Empty cart state
   if (!cartItems || cartItems.length === 0) {
     return (
@@ -71,8 +94,18 @@ export default function Pagnie() {
               className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-2xl hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl"
             >
               Continue Shopping
-              <svg className="w-6 h-6 ml-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              <svg
+                className="w-6 h-6 ml-3"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M17 8l4 4m0 0l-4 4m4-4H3"
+                />
               </svg>
             </Link>
           </div>
@@ -108,8 +141,18 @@ export default function Pagnie() {
                     className="text-blue-600 hover:text-blue-700 font-medium flex items-center gap-2"
                   >
                     Continue Shopping
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 5l7 7-7 7"
+                      />
                     </svg>
                   </Link>
                   <button
@@ -122,75 +165,100 @@ export default function Pagnie() {
               </div>
 
               <div className="space-y-6">
-                {cartItems.map((item) => (
-                  <div
-                    key={item.id}
-                    className="flex items-center gap-6 p-6 border border-gray-200 rounded-2xl hover:shadow-lg transition-all duration-300"
-                  >
-                    <div className="w-24 h-24 bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl flex items-center justify-center">
-                      <span className="text-3xl">{item.image || "📦"}</span>
-                    </div>
-
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold text-gray-900 text-lg mb-2">
-                        {item.name}
-                      </h3>
-                      <p className="text-gray-600 text-sm mb-2">
-                        {item.category}
-                      </p>
-                      <div className="flex items-center gap-2">
-                        <div className="flex text-yellow-400 text-sm">
-                          {"★".repeat(Math.floor(item.rating || 4))}
-                        </div>
-                        <span className="text-gray-500 text-xs">
-                          ({item.rating || 4.0})
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="text-right">
-                      <p className="font-bold text-blue-600 text-xl">
-                        {item.price}
-                      </p>
-                      {item.originalPrice && (
-                        <p className="text-gray-400 line-through text-sm">
-                          {item.originalPrice}
-                        </p>
-                      )}
-                      <p className="text-sm text-gray-600 mt-1">
-                        {item.quantity} × {parseFloat(item.price?.replace("FCFA", "")) || 0} FCFA
-                      </p>
-                    </div>
-
-                    <div className="flex items-center gap-3">
-                      <button
-                        onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
-                        className="w-10 h-10 flex items-center justify-center border border-gray-300 rounded-xl hover:bg-gray-100 transition-colors text-xl"
-                      >
-                        −
-                      </button>
-                      <span className="w-8 text-center font-medium text-lg">
-                        {item.quantity}
-                      </span>
-                      <button
-                        onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
-                        className="w-10 h-10 flex items-center justify-center border border-gray-300 rounded-xl hover:bg-gray-100 transition-colors text-xl"
-                      >
-                        +
-                      </button>
-                    </div>
-
-                    <button
-                      onClick={() => handleRemoveItem(item.id)}
-                      className="p-3 text-gray-400 hover:text-red-500 transition-colors rounded-xl hover:bg-red-50"
-                      title="Remove item"
+                {cartItems.map((item) => {
+                  const itemPrice = getPrice(item.price);
+                  return (
+                    <div
+                      key={item.id}
+                      className="flex items-center gap-6 p-6 border border-gray-200 rounded-2xl hover:shadow-lg transition-all duration-300"
                     >
-                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                      </svg>
-                    </button>
-                  </div>
-                ))}
+                      <div className="w-24 h-24 bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl flex items-center justify-center">
+                        {item.image && item.image.startsWith("http") ? (
+                          <img
+                            src={item.image}
+                            alt={item.name}
+                            className="w-full h-full object-cover rounded-xl"
+                          />
+                        ) : (
+                          <span className="text-3xl">📦</span>
+                        )}
+                      </div>
+
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-semibold text-gray-900 text-lg mb-2">
+                          {item.name}
+                        </h3>
+                        <p className="text-gray-600 text-sm mb-2">
+                          {item.category}
+                        </p>
+                        <div className="flex items-center gap-2">
+                          <div className="flex text-yellow-400 text-sm">
+                            {"★".repeat(Math.floor(item.rating || 4))}
+                          </div>
+                          <span className="text-gray-500 text-xs">
+                            ({item.rating || 4.0})
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="text-right">
+                        <p className="font-bold text-blue-600 text-xl">
+                          {formatPrice(item.price)}
+                        </p>
+                        {item.originalPrice && (
+                          <p className="text-gray-400 line-through text-sm">
+                            {formatPrice(item.originalPrice)}
+                          </p>
+                        )}
+                        <p className="text-sm text-gray-600 mt-1">
+                          {item.quantity} × {formatPrice(item.price)}
+                        </p>
+                      </div>
+
+                      <div className="flex items-center gap-3">
+                        <button
+                          onClick={() =>
+                            handleUpdateQuantity(item.id, item.quantity - 1)
+                          }
+                          className="w-10 h-10 flex items-center justify-center border border-gray-300 rounded-xl hover:bg-gray-100 transition-colors text-xl"
+                        >
+                          −
+                        </button>
+                        <span className="w-8 text-center font-medium text-lg">
+                          {item.quantity}
+                        </span>
+                        <button
+                          onClick={() =>
+                            handleUpdateQuantity(item.id, item.quantity + 1)
+                          }
+                          className="w-10 h-10 flex items-center justify-center border border-gray-300 rounded-xl hover:bg-gray-100 transition-colors text-xl"
+                        >
+                          +
+                        </button>
+                      </div>
+
+                      <button
+                        onClick={() => handleRemoveItem(item.id)}
+                        className="p-3 text-gray-400 hover:text-red-500 transition-colors rounded-xl hover:bg-red-50"
+                        title="Remove item"
+                      >
+                        <svg
+                          className="w-6 h-6"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                  );
+                })}
               </div>
             </div>
 
@@ -232,25 +300,27 @@ export default function Pagnie() {
               <div className="space-y-4 mb-6">
                 <div className="flex justify-between text-lg">
                   <span className="text-gray-600">Subtotal</span>
-                  <span className="font-semibold">{subtotal.toFixed(2)} FCFA</span>
+                  <span className="font-semibold">${subtotal.toFixed(2)}</span>
                 </div>
 
                 <div className="flex justify-between text-lg">
                   <span className="text-gray-600">Shipping</span>
-                  <span className="font-semibold">{shipping.toFixed(2)} FCFA</span>
+                  <span className="font-semibold">${shipping.toFixed(2)}</span>
                 </div>
 
                 {discount > 0 && (
                   <div className="flex justify-between text-lg text-green-600">
                     <span>Discount (10%)</span>
-                    <span className="font-semibold">-{discount.toFixed(2)} FCFA</span>
+                    <span className="font-semibold">
+                      -${discount.toFixed(2)}
+                    </span>
                   </div>
                 )}
 
                 <div className="border-t border-gray-200 pt-4">
                   <div className="flex justify-between text-xl font-bold">
                     <span>Total</span>
-                    <span className="text-blue-600">{total.toFixed(2)} FCFA</span>
+                    <span className="text-blue-600">${total.toFixed(2)}</span>
                   </div>
                 </div>
               </div>

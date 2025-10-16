@@ -6,6 +6,8 @@ import Login from '../Login';
 import Register from '../Register';
 import ResetPassword from '../ResetPassword';
 import ProductDetails from "../ProductDetail";
+import ProtectedRoute from "./ProtectedRoute";
+import { Navigate } from "react-router-dom";
 
 export default function AppRoutes({ searchItem, setAddCart,addCart }) {
   return (
@@ -16,11 +18,19 @@ export default function AppRoutes({ searchItem, setAddCart,addCart }) {
       />
       {/* Add this */}
       <Route path="/cart" element={<Pagnie addCart={addCart} />} />
-      <Route path="/checkout" element={<Checkout />} />
+      <Route
+        path="/checkout"
+        element={
+          <ProtectedRoute>
+            <Checkout />
+          </ProtectedRoute>
+        }
+      />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/product/:id" element={<ProductDetails />} />
       <Route path="/resetpassword" element={<ResetPassword />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 }

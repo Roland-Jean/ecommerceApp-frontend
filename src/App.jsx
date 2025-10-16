@@ -9,6 +9,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { Provider } from 'react-redux';
 import store from './store/store';
+import { Toaster } from 'react-hot-toast';
 // Move QueryClient outside component to prevent recreating on each render
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -23,7 +24,7 @@ const queryClient = new QueryClient({
 function App() {
   return (
     <React.StrictMode>
-      <Provider store={store}> 
+      <Provider store={store}>
         <QueryClientProvider client={queryClient}>
           <BrowserRouter basename="/ecommerceApp-frontend">
             <Header />
@@ -31,6 +32,7 @@ function App() {
             <Footer />
           </BrowserRouter>
           <ReactQueryDevtools initialIsOpen={false} />
+          <Toaster position="bottom-right" />
         </QueryClientProvider>
       </Provider>
     </React.StrictMode>
