@@ -12,7 +12,7 @@ export const getUserById = (id) => {
 
 // Neuen Benutzer erstellen
 export const createUser = (userData) => {
-  return axiosInstance.post("/users", userData); // korrigierte URL + Daten
+  return axiosInstance.post("/users/register", userData); // korrigierte URL + Daten
 };
 
 // Benutzer aktualisieren

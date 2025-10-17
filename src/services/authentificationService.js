@@ -4,9 +4,9 @@ import toast from "react-hot-toast";
 
 // Login Service
 export const loginService = async (user) => {
+  console.log(user);
   try {
-    const response = await loginUser(user.email, user.password);
-
+    const response = await loginUser(user);
     if (response.token) {
       localStorage.setItem("authToken", response.token);
       localStorage.setItem("user", JSON.stringify(response.user));
@@ -31,7 +31,14 @@ export const logoutService = () => {
 // Register Service
 export const registerUserService = async (userData) => {
   try {
-    const response = await registerUser(userData);
+    const transformedData = {
+      ...userData,
+      username: `${userData.firstName} ${userData.lastName}`.trim(),
+    };
+    delete transformedData.firstName;
+    delete transformedData.lastName;
+    console.log(transformedData);
+    const response = await registerUser(transformedData);
     return response;
   } catch (error) {
     console.error("Registration service error:", error);
