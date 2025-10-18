@@ -1,9 +1,10 @@
 // src/pages/ProductDetail.jsx
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useProducts } from "../hooks/useProducts";
 import { addItem } from '../store/cartSlice';
+import toast from "react-hot-toast";
 
 export default function ProductDetails() {
   const { id } = useParams();
@@ -99,7 +100,7 @@ export default function ProductDetails() {
     dispatch(addItem(cartItem));
     
     // Show success message or notification
-    alert(`${quantity} x ${product.name} added to cart!`);
+    toast.success(`${product.name} added to cart!`);
     
     // Optionally redirect to cart
     // navigate('/cart');
