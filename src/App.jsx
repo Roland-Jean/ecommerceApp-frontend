@@ -1,38 +1,42 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+// src/App.jsx
+import React from 'react';
+import Header from './components/Header';
+import Footer from './components/Footer';
+import AppRoutes from './pages/routing/AppRoutes';
+import { BrowserRouter } from 'react-router-dom';
+import './App.css';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { Provider } from 'react-redux';
+import store from './store/store';
+import { Toaster } from 'react-hot-toast';
+// Move QueryClient outside component to prevent recreating on each render
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5, // 5 minuntes time to be consider data as fresh
+      refetchInterval: 1000 * 30, // every 30 seconds
+  refetchOnWindowFocus: true, //refresh when user switch back to  the tab
+    },
+  },
+});
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Ecommerce Frontend</h1>
-      <div className="card">
-        <p>
-          Welcome to your new ecommerce application! Built with React + Vite for blazing fast development.
-        </p>
-        <button onClick={() => setCount((count) => count + 1)}>
-          Products viewed: {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Ready to start building your ecommerce features!
-      </p>
-    </>
-  )
+    <React.StrictMode>
+      <Provider store={store}>
+        <QueryClientProvider client={queryClient}>
+          <BrowserRouter basename="/ecommerceApp-frontend">
+            <Header />
+            <AppRoutes />
+            <Footer />
+          </BrowserRouter>
+          <ReactQueryDevtools initialIsOpen={false} />
+          <Toaster position="bottom-right" />
+        </QueryClientProvider>
+      </Provider>
+    </React.StrictMode>
+  );
 }
 
-export default App
+export default App;
