@@ -26,7 +26,7 @@ function App() {
     <React.StrictMode>
       <Provider store={store}>
         <QueryClientProvider client={queryClient}>
-          <BrowserRouter basename="/ecommerceApp-frontend">
+          <BrowserRouter>
             <Header />
             <AppRoutes />
             <Footer />
