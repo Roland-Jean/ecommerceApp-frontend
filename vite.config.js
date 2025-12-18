@@ -5,5 +5,10 @@ import tailwindcss from '@tailwindcss/vite'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(),tailwindcss()],
-  base: "/"
+  // Use root base for Vercel, only use subfolder for GitHub Pages
+  base: import.meta.env.GITHUB_PAGES === 'true' ? '/ecommerceApp-frontend/' : '/',
+  build: {
+    outDir: 'dist',
+    sourcemap: false,
+  },
 });
