@@ -22,14 +22,11 @@ const queryClient = new QueryClient({
 });
 
 function App() {
-  // Use basename only for GitHub Pages, not for Vercel
-  const basename = import.meta.env.VITE_GITHUB_PAGES === 'true' ? '/ecommerceApp-frontend' : '/';
-  
   return (
     <React.StrictMode>
       <Provider store={store}>
         <QueryClientProvider client={queryClient}>
-          <BrowserRouter basename={basename}>
+          <BrowserRouter>
             <Header />
             <AppRoutes />
             <Footer />
