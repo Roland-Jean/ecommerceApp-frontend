@@ -1,28 +1,28 @@
 // src/pages/ProductDetail.jsx
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { useDispatch } from 'react-redux';
+import { useDispatch } from "react-redux";
 import { useProducts } from "../hooks/useProducts";
-import { addItem } from '../store/cartSlice';
+import { addItem } from "../store/cartSlice";
 import toast from "react-hot-toast";
 
 export default function ProductDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  
+
   // Use TanStack Query instead of local state
   const { data: products = [], isLoading, error } = useProducts();
-  
+
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
 
   // Find current product and related products from cached data
   const product = products.find((p) => p.id === parseInt(id));
-  const relatedProducts = product 
-    ? products.filter(
-        (p) => p.category === product.category && p.id !== product.id
-      ).slice(0, 4)
+  const relatedProducts = product
+    ? products
+        .filter((p) => p.category === product.category && p.id !== product.id)
+        .slice(0, 4)
     : [];
 
   // Loading state
@@ -44,8 +44,8 @@ export default function ProductDetails() {
         <div className="text-center">
           <div className="text-4xl mb-4">❌</div>
           <p className="text-red-600 mb-4">Error loading product</p>
-          <button 
-            onClick={() => window.location.reload()} 
+          <button
+            onClick={() => window.location.reload()}
             className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
           >
             Retry
@@ -81,9 +81,12 @@ export default function ProductDetails() {
       return 0;
     }
     try {
-      const original = parseFloat(product.originalPrice.replace("FCFA", "")) || 0;
+      const original =
+        parseFloat(product.originalPrice.replace("FCFA", "")) || 0;
       const current = parseFloat(product.price.replace("FCFA", "")) || 0;
-      return original > current ? Math.round(((original - current) / original) * 100) : 0;
+      return original > current
+        ? Math.round(((original - current) / original) * 100)
+        : 0;
     } catch {
       return 0;
     }
@@ -95,13 +98,13 @@ export default function ProductDetails() {
   const handleAddToCart = () => {
     const cartItem = {
       ...product,
-      quantity: quantity
+      quantity: quantity,
     };
     dispatch(addItem(cartItem));
-    
+
     // Show success message or notification
     toast.success(`${product.name} added to cart!`);
-    
+
     // Optionally redirect to cart
     // navigate('/cart');
   };
@@ -142,7 +145,7 @@ export default function ProductDetails() {
             {/* Main Image */}
             <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
               <div className="aspect-square bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center relative">
-                <span className="text-8xl">{product.image || '📦'}</span>
+                <span className="text-8xl">{product.imageUrl || "📦"}</span>
                 {product.badge && (
                   <span className="absolute top-6 left-6 bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-bold">
                     {product.badge}
@@ -169,7 +172,7 @@ export default function ProductDetails() {
                   }`}
                 >
                   <div className="h-full bg-gradient-to-br from-gray-100 to-gray-200 rounded-md flex items-center justify-center">
-                    <span className="text-2xl">{product.image || '📦'}</span>
+                    <span className="text-2xl">{product.imageUrl || "📦"}</span>
                   </div>
                 </div>
               ))}
@@ -188,7 +191,9 @@ export default function ProductDetails() {
                   <div className="flex text-yellow-400 text-lg">
                     {"★★★★★".slice(0, Math.floor(product.rating || 4))}
                   </div>
-                  <span className="text-gray-600 ml-2">({product.rating || 4.0})</span>
+                  <span className="text-gray-600 ml-2">
+                    ({product.rating || 4.0})
+                  </span>
                 </div>
                 <span className="text-gray-400">|</span>
                 <span className="text-gray-600 text-sm">127 reviews</span>
@@ -205,16 +210,17 @@ export default function ProductDetails() {
                 <span className="text-3xl font-bold text-blue-600">
                   {product.price}
                 </span>
-                {product.originalPrice && product.originalPrice !== product.price && (
-                  <>
-                    <span className="text-xl text-gray-400 line-through">
-                      {product.originalPrice}
-                    </span>
-                    <span className="bg-red-100 text-red-600 px-3 py-1 rounded-full text-sm font-bold">
-                      Save {discountPercentage}%
-                    </span>
-                  </>
-                )}
+                {product.originalPrice &&
+                  product.originalPrice !== product.price && (
+                    <>
+                      <span className="text-xl text-gray-400 line-through">
+                        {product.originalPrice}
+                      </span>
+                      <span className="bg-red-100 text-red-600 px-3 py-1 rounded-full text-sm font-bold">
+                        Save {discountPercentage}%
+                      </span>
+                    </>
+                  )}
               </div>
               <p className="text-gray-600 text-sm">
                 Tax included • Free shipping
@@ -277,8 +283,18 @@ export default function ProductDetails() {
                 className="text-blue-600 hover:text-blue-700 font-medium flex items-center space-x-1"
               >
                 <span>View All</span>
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
                 </svg>
               </Link>
             </div>
@@ -292,7 +308,9 @@ export default function ProductDetails() {
                 >
                   <div className="relative">
                     <div className="h-48 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                      <span className="text-4xl">{relatedProduct.image || '📦'}</span>
+                      <span className="text-4xl">
+                        {relatedProduct.imageUrl || "📦"}
+                      </span>
                     </div>
                     {relatedProduct.badge && (
                       <span className="absolute top-4 left-4 bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium">
@@ -306,7 +324,10 @@ export default function ProductDetails() {
                     </h3>
                     <div className="flex items-center mb-2">
                       <div className="flex text-yellow-400 text-sm">
-                        {"★★★★★".slice(0, Math.floor(relatedProduct.rating || 4))}
+                        {"★★★★★".slice(
+                          0,
+                          Math.floor(relatedProduct.rating || 4)
+                        )}
                       </div>
                       <span className="text-gray-600 text-sm ml-1">
                         ({relatedProduct.rating || 4.0})
@@ -317,11 +338,13 @@ export default function ProductDetails() {
                         <span className="text-lg font-bold text-blue-600">
                           {relatedProduct.price}
                         </span>
-                        {relatedProduct.originalPrice && relatedProduct.originalPrice !== relatedProduct.price && (
-                          <span className="text-sm text-gray-400 line-through ml-2">
-                            {relatedProduct.originalPrice}
-                          </span>
-                        )}
+                        {relatedProduct.originalPrice &&
+                          relatedProduct.originalPrice !==
+                            relatedProduct.price && (
+                            <span className="text-sm text-gray-400 line-through ml-2">
+                              {relatedProduct.originalPrice}
+                            </span>
+                          )}
                       </div>
                     </div>
                   </div>
