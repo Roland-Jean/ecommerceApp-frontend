@@ -145,7 +145,25 @@ export default function ProductDetails() {
             {/* Main Image */}
             <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
               <div className="aspect-square bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center relative">
-                <span className="text-8xl">{product.imageUrl || "📦"}</span>
+                {product.imageUrl ? (
+                  <img
+                    src={product.imageUrl}
+                    alt={product.name}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.target.style.display = "none";
+                      const fallback =
+                        e.target.parentElement.querySelector(".fallback-icon");
+                      if (fallback) fallback.style.display = "flex";
+                    }}
+                  />
+                ) : null}
+                <div
+                  className="fallback-icon absolute inset-0 flex items-center justify-center"
+                  style={{ display: product.imageUrl ? "none" : "flex" }}
+                >
+                  <span className="text-8xl">📦</span>
+                </div>
                 {product.badge && (
                   <span className="absolute top-6 left-6 bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-bold">
                     {product.badge}
@@ -171,8 +189,28 @@ export default function ProductDetails() {
                       : "border-gray-200 hover:border-gray-300"
                   }`}
                 >
-                  <div className="h-full bg-gradient-to-br from-gray-100 to-gray-200 rounded-md flex items-center justify-center">
-                    <span className="text-2xl">{product.imageUrl || "📦"}</span>
+                  <div className="h-full bg-gradient-to-br from-gray-100 to-gray-200 rounded-md flex items-center justify-center overflow-hidden relative">
+                    {product.imageUrl ? (
+                      <img
+                        src={product.imageUrl}
+                        alt={`${product.name} thumbnail ${index + 1}`}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.target.style.display = "none";
+                          const fallback =
+                            e.target.parentElement.querySelector(
+                              ".fallback-icon"
+                            );
+                          if (fallback) fallback.style.display = "flex";
+                        }}
+                      />
+                    ) : null}
+                    <div
+                      className="fallback-icon absolute inset-0 flex items-center justify-center"
+                      style={{ display: product.imageUrl ? "none" : "flex" }}
+                    >
+                      <span className="text-2xl">📦</span>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -199,7 +237,9 @@ export default function ProductDetails() {
                 <span className="text-gray-600 text-sm">127 reviews</span>
                 <span className="text-gray-400">|</span>
                 <span className="text-green-600 text-sm font-medium">
-                  In Stock
+                  {product.stock > 0
+                    ? `In Stock (${product.stock})`
+                    : "Out of Stock"}
                 </span>
               </div>
             </div>
@@ -208,13 +248,13 @@ export default function ProductDetails() {
             <div className="bg-gray-50 rounded-xl p-6">
               <div className="flex items-center space-x-4 mb-2">
                 <span className="text-3xl font-bold text-blue-600">
-                  {product.price}
+                  {product.price} FCFA
                 </span>
                 {product.originalPrice &&
                   product.originalPrice !== product.price && (
                     <>
                       <span className="text-xl text-gray-400 line-through">
-                        {product.originalPrice}
+                        {product.originalPrice} FCFA
                       </span>
                       <span className="bg-red-100 text-red-600 px-3 py-1 rounded-full text-sm font-bold">
                         Save {discountPercentage}%
@@ -227,8 +267,41 @@ export default function ProductDetails() {
               </p>
             </div>
 
-            {/* Rest of your existing JSX for features, quantity, etc. */}
-            {/* ... (keep all the existing JSX but update the buttons) */}
+            {/* Description */}
+            <div className="bg-white rounded-xl p-6 border border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">
+                Description
+              </h3>
+              <p className="text-gray-600 leading-relaxed">
+                {product.description ||
+                  "No description available for this product."}
+              </p>
+            </div>
+
+            {/* Features */}
+            <div className="bg-white rounded-xl p-6 border border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                Key Features
+              </h3>
+              <ul className="space-y-3">
+                <li className="flex items-start">
+                  <span className="text-green-500 mr-2 mt-1">✓</span>
+                  <span className="text-gray-600">High quality materials</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="text-green-500 mr-2 mt-1">✓</span>
+                  <span className="text-gray-600">Fast delivery</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="text-green-500 mr-2 mt-1">✓</span>
+                  <span className="text-gray-600">30-day return policy</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="text-green-500 mr-2 mt-1">✓</span>
+                  <span className="text-gray-600">1-year warranty</span>
+                </li>
+              </ul>
+            </div>
 
             {/* Quantity and Add to Cart */}
             <div className="bg-white rounded-xl p-6 border border-gray-200">
@@ -245,24 +318,32 @@ export default function ProductDetails() {
                     {quantity}
                   </span>
                   <button
-                    onClick={() => setQuantity(quantity + 1)}
+                    onClick={() =>
+                      setQuantity(Math.min(product.stock, quantity + 1))
+                    }
                     className="px-3 py-2 text-gray-600 hover:text-gray-800 hover:bg-gray-50 transition-colors"
+                    disabled={quantity >= product.stock}
                   >
                     +
                   </button>
                 </div>
+                <span className="text-sm text-gray-500">
+                  Max: {product.stock}
+                </span>
               </div>
 
               <div className="flex flex-col sm:flex-row gap-4">
                 <button
                   onClick={handleAddToCart}
-                  className="flex-1 bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-all duration-300 font-medium text-lg shadow-lg hover:shadow-xl transform hover:scale-105"
+                  disabled={product.stock === 0}
+                  className="flex-1 bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-all duration-300 font-medium text-lg shadow-lg hover:shadow-xl transform hover:scale-105 disabled:bg-gray-400 disabled:cursor-not-allowed disabled:transform-none"
                 >
                   🛒 Add to Cart
                 </button>
                 <button
                   onClick={handleBuyNow}
-                  className="flex-1 bg-green-600 text-white py-3 px-6 rounded-lg hover:bg-green-700 transition-all duration-300 font-medium text-lg shadow-lg hover:shadow-xl transform hover:scale-105"
+                  disabled={product.stock === 0}
+                  className="flex-1 bg-green-600 text-white py-3 px-6 rounded-lg hover:bg-green-700 transition-all duration-300 font-medium text-lg shadow-lg hover:shadow-xl transform hover:scale-105 disabled:bg-gray-400 disabled:cursor-not-allowed disabled:transform-none"
                 >
                   ⚡ Buy Now
                 </button>
@@ -303,14 +384,34 @@ export default function ProductDetails() {
               {relatedProducts.map((relatedProduct) => (
                 <Link
                   key={relatedProduct.id}
-                  to={`/product/${relatedProduct.id}`} // Updated route
+                  to={`/product/${relatedProduct.id}`}
                   className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 overflow-hidden"
                 >
                   <div className="relative">
-                    <div className="h-48 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                      <span className="text-4xl">
-                        {relatedProduct.imageUrl || "📦"}
-                      </span>
+                    <div className="h-48 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center overflow-hidden">
+                      {relatedProduct.imageUrl ? (
+                        <img
+                          src={relatedProduct.imageUrl}
+                          alt={relatedProduct.name}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            e.target.style.display = "none";
+                            const fallback =
+                              e.target.parentElement.querySelector(
+                                ".fallback-icon"
+                              );
+                            if (fallback) fallback.style.display = "flex";
+                          }}
+                        />
+                      ) : null}
+                      <div
+                        className="fallback-icon absolute inset-0 flex items-center justify-center"
+                        style={{
+                          display: relatedProduct.imageUrl ? "none" : "flex",
+                        }}
+                      >
+                        <span className="text-4xl">📦</span>
+                      </div>
                     </div>
                     {relatedProduct.badge && (
                       <span className="absolute top-4 left-4 bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium">
@@ -336,13 +437,13 @@ export default function ProductDetails() {
                     <div className="flex items-center justify-between">
                       <div>
                         <span className="text-lg font-bold text-blue-600">
-                          {relatedProduct.price}
+                          {relatedProduct.price} FCFA
                         </span>
                         {relatedProduct.originalPrice &&
                           relatedProduct.originalPrice !==
                             relatedProduct.price && (
                             <span className="text-sm text-gray-400 line-through ml-2">
-                              {relatedProduct.originalPrice}
+                              {relatedProduct.originalPrice} FCFA
                             </span>
                           )}
                       </div>
