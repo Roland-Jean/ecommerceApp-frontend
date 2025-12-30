@@ -173,9 +173,9 @@ export default function Pagnie() {
                       className="flex items-center gap-6 p-6 border border-gray-200 rounded-2xl hover:shadow-lg transition-all duration-300"
                     >
                       <div className="w-24 h-24 bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl flex items-center justify-center">
-                        {item.image && item.image.startsWith("http") ? (
+                        {item.imageUrl && item.imageUrl.startsWith("http") ? (
                           <img
-                            src={item.image}
+                            src={item.imageUrl}
                             alt={item.name}
                             className="w-full h-full object-cover rounded-xl"
                           />
