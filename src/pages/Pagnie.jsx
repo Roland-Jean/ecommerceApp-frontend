@@ -38,7 +38,7 @@ export default function Pagnie() {
     return total + price * (item.quantity || 1);
   }, 0);
 
-  const shipping = subtotal > 0 ? 5.99 : 0;
+  const shipping = subtotal > 0 ? 5000 : 0; // 5000 FCFA shipping
   const discount = isPromoApplied ? subtotal * 0.1 : 0; // 10% discount
   const total = subtotal + shipping - discount;
 
@@ -70,10 +70,10 @@ export default function Pagnie() {
     }
   };
 
-  // Format price for display
+  // Format price for display in FCFA
   const formatPrice = (price) => {
     const numericPrice = getPrice(price);
-    return `$${numericPrice.toFixed(2)}`;
+    return `${numericPrice.toLocaleString("fr-FR")} FCFA`;
   };
 
   // Empty cart state
@@ -172,16 +172,28 @@ export default function Pagnie() {
                       key={item.id}
                       className="flex items-center gap-6 p-6 border border-gray-200 rounded-2xl hover:shadow-lg transition-all duration-300"
                     >
-                      <div className="w-24 h-24 bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl flex items-center justify-center">
-                        {item.imageUrl && item.imageUrl.startsWith("http") ? (
+                      <div className="w-24 h-24 bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl flex items-center justify-center overflow-hidden relative">
+                        {item.imageUrl ? (
                           <img
                             src={item.imageUrl}
                             alt={item.name}
                             className="w-full h-full object-cover rounded-xl"
+                            onError={(e) => {
+                              e.target.style.display = "none";
+                              const fallback =
+                                e.target.parentElement.querySelector(
+                                  ".fallback-icon"
+                                );
+                              if (fallback) fallback.style.display = "flex";
+                            }}
                           />
-                        ) : (
+                        ) : null}
+                        <div
+                          className="fallback-icon absolute inset-0 flex items-center justify-center"
+                          style={{ display: item.imageUrl ? "none" : "flex" }}
+                        >
                           <span className="text-3xl">📦</span>
-                        )}
+                        </div>
                       </div>
 
                       <div className="flex-1 min-w-0">
@@ -189,7 +201,7 @@ export default function Pagnie() {
                           {item.name}
                         </h3>
                         <p className="text-gray-600 text-sm mb-2">
-                          {item.category}
+                          {item.category || "General"}
                         </p>
                         <div className="flex items-center gap-2">
                           <div className="flex text-yellow-400 text-sm">
@@ -300,19 +312,23 @@ export default function Pagnie() {
               <div className="space-y-4 mb-6">
                 <div className="flex justify-between text-lg">
                   <span className="text-gray-600">Subtotal</span>
-                  <span className="font-semibold">${subtotal.toFixed(2)}</span>
+                  <span className="font-semibold">
+                    {subtotal.toLocaleString("fr-FR")} FCFA
+                  </span>
                 </div>
 
                 <div className="flex justify-between text-lg">
                   <span className="text-gray-600">Shipping</span>
-                  <span className="font-semibold">${shipping.toFixed(2)}</span>
+                  <span className="font-semibold">
+                    {shipping.toLocaleString("fr-FR")} FCFA
+                  </span>
                 </div>
 
                 {discount > 0 && (
                   <div className="flex justify-between text-lg text-green-600">
                     <span>Discount (10%)</span>
                     <span className="font-semibold">
-                      -${discount.toFixed(2)}
+                      -{discount.toLocaleString("fr-FR")} FCFA
                     </span>
                   </div>
                 )}
@@ -320,7 +336,9 @@ export default function Pagnie() {
                 <div className="border-t border-gray-200 pt-4">
                   <div className="flex justify-between text-xl font-bold">
                     <span>Total</span>
-                    <span className="text-blue-600">${total.toFixed(2)}</span>
+                    <span className="text-blue-600">
+                      {total.toLocaleString("fr-FR")} FCFA
+                    </span>
                   </div>
                 </div>
               </div>
