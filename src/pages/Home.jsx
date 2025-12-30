@@ -246,7 +246,7 @@ export default function Home() {
                       >
                         {/* Product Image */}
                         <div className="h-48 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center overflow-hidden">
-                          {product.imageUrl ? (
+                          {product.imageUrl ?(
                             <img
                               src={product.imageUrl}
                               alt={product.name}
@@ -261,7 +261,7 @@ export default function Home() {
                           {/* Fallback when no image or image fails */}
                           <div
                             className={`w-full h-full flex items-center justify-center ${
-                              product.image && product.image.startsWith("http")
+                              product.imageUrl && product.imageUrl.startsWith("http")
                                 ? "hidden"
                                 : "flex"
                             }`}
