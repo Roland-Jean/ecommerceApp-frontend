@@ -129,12 +129,12 @@ export default function Home() {
   const prevPage = () => dispatch(setCurrentPage(Math.max(currentPage - 1, 1)));
 
   // Format price with currency
-  const formatPrice = (price) => {
-    if (typeof price === "number") {
-      return `$${price.toFixed(2)}`;
-    }
-    return price || "$0.00";
-  };
+ const formatPrice = (price) => {
+   if (typeof price === "number") {
+     return `${price.toLocaleString("fr-FR")} FCFA`;
+   }
+   return price || "0 FCFA";
+ };
 
   // Main content
   return (
