@@ -60,6 +60,8 @@ export default function Home() {
     if (products.length > 0) {
       const extractedCategories = extractCategories(products);
       setCategories(extractedCategories);
+      console.log("First product:", products[0]);
+      console.log("Image URL:", products[0]?.image);
     }
   }, [products]);
 
@@ -244,7 +246,7 @@ export default function Home() {
                       >
                         {/* Product Image */}
                         <div className="h-48 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center overflow-hidden">
-                          {product.image && product.image.startsWith("http") ? (
+                          {product.image ? (
                             <img
                               src={product.image}
                               alt={product.name}
