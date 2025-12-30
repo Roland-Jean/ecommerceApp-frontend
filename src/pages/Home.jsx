@@ -131,12 +131,12 @@ export default function Home() {
   const prevPage = () => dispatch(setCurrentPage(Math.max(currentPage - 1, 1)));
 
   // Format price with currency
- const formatPrice = (price) => {
-   if (typeof price === "number") {
-     return `${price.toLocaleString("fr-FR")} FCFA`;
-   }
-   return price || "0 FCFA";
- };
+  const formatPrice = (price) => {
+    if (typeof price === "number") {
+      return `${price.toLocaleString("fr-FR")} FCFA`;
+    }
+    return price || "0 FCFA";
+  };
 
   // Main content
   return (
@@ -246,9 +246,9 @@ export default function Home() {
                       >
                         {/* Product Image */}
                         <div className="h-48 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center overflow-hidden">
-                          {product.image ? (
+                          {product.imageUrl ? (
                             <img
-                              src={product.image}
+                              src={product.imageUrl}
                               alt={product.name}
                               className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                               onError={(e) => {
